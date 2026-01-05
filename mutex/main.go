@@ -5,25 +5,47 @@ import (
 	"sync"
 )
 
-var msg string
+
 var wg sync.WaitGroup
-
-
-func updateMessage(s string ){
-	defer wg.Done()
-	// m.Lock()
-	msg =s
-	// m.Unlock()
-}
-
+ type Income struct{
+	Source string
+	Amount int 
+ }
 func main(){
-	msg = "Hello world"
-	// var mutex  sync.Mutex
-	wg.Add(2)
-	go updateMessage("hello universe")
-		go updateMessage("hello cosmos")
-		wg.Wait()
-		fmt.Println(msg)
+	//variable for bank balance
+	var bankBalance int
+	var balance sync.Mutex
 
-	
+	//print out starting value
+    fmt.Printf("Intial account balance: $%d.00",bankBalance)
+	fmt.Println()
+
+	//define the weekly revenue
+ incomes := []Income{
+	{Source:"Main job",Amount :5000},
+	{Source:"Gifts",Amount :10},
+	{Source:"Part time job",Amount :5000},
+	{Source:"Investment",Amount :100},
+ }
+wg.Add(len(incomes))
+	//loop through 52 weeks and print out how ,muhc is made ;  keep a running total
+  for i , income :=range incomes{
+	go  func(i int , income Income)  {
+		defer wg.Done()
+		
+		for week :=1;week <=52; week ++ {
+			 balance.Lock()
+			temp := bankBalance
+			temp += income.Amount
+			bankBalance = temp
+			balance.Unlock()
+			fmt.Printf("On week %d , you earned $%d.00 form %s\n", week , income.Amount , income.Source)
+		}
+	}(i,income)
+  }
+  wg.Wait()
+	//print out the final balance
+fmt.Printf("Final bank balance: $%d.00",bankBalance )
+fmt.Println()
+
 }
