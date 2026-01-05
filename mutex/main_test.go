@@ -1,15 +1,23 @@
 package main
 
-import "testing"
-func Test_updateMessage(t *testing.T){
-	msg = "Hello world"
+import (
+	"io"
+	"os"
+	"strings"
+	"testing"
+)
+func Test_main(t *testing.T){
+	stdOut :=os.Stdout
+	r ,w , _ := os.Pipe()
 
-	wg.Add(1)
-	go updateMessage("1")
-	go updateMessage("Goodbye ,Cruel world")
-	wg.Wait()
+	os.Stdout = w
+	main()
+	_ = w.Close()
+	result, _:= io.ReadAll(r)
+	output := string(result)
+	os.Stdout =stdOut
 
-	if msg != "Goodbye ,Cruel world"{
-		t.Error("incorrect value in msg")
+	if !strings.Contains(output,"525720.00"){
+		t.Errorf("wrong balance returned")
 	}
 }
