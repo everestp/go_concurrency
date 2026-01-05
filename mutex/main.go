@@ -9,19 +9,19 @@ var msg string
 var wg sync.WaitGroup
 
 
-func updateMessage(s string , m *sync.Mutex){
+func updateMessage(s string ){
 	defer wg.Done()
-	m.Lock()
+	// m.Lock()
 	msg =s
-	m.Unlock()
+	// m.Unlock()
 }
 
 func main(){
 	msg = "Hello world"
-	var mutex  sync.Mutex
+	// var mutex  sync.Mutex
 	wg.Add(2)
-	go updateMessage("hello universe", &mutex)
-		go updateMessage("hello cosmos",&mutex)
+	go updateMessage("hello universe")
+		go updateMessage("hello cosmos")
 		wg.Wait()
 		fmt.Println(msg)
 
